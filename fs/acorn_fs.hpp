@@ -19,16 +19,31 @@
 #ifndef ACORN_FS_HPP
 #define ACORN_FS_HPP
 
-#include <memdisk>
 #include <fs/disk.hpp>
 
 namespace acorn {
 
-using Disk_ptr = fs::Disk_ptr;
+  // Multidimensional Linked-list
+  class Leaf {
+    public:
+      Leaf      *child;
+      std::string     name;
+      uint64_t  size;
+      Leaf      *next;
 
-void recursive_fs_dump(Disk_ptr disk, const std::vector<fs::Dirent>& entries, const int depth = 1);
+      Leaf(const std::string n, uint64_t sz) {
+        name = n;
+        size = sz;
+        child = nullptr;
+        next = nullptr;
+      };
+  };
 
-void list_static_content(Disk_ptr disk);
+  void recursive_fs_dump(fs::Disk_ptr disk, const std::vector<fs::Dirent>& entries, const int depth = 1);
+  void recursive_fs_gather(fs::Disk_ptr disk, const std::vector<fs::Dirent>& entries, Leaf *parent);
+
+  void list_static_content(fs::Disk_ptr disk);
+  void free_tree(Leaf *parent);
 
 } //< namespace acorn
 
